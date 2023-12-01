@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addTask, deleteTask, editTask } from "./TodoSlice";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -12,7 +12,7 @@ const TodoList = () => {
   const tasks = useSelector((state) => state.todo.tasks);
 
   const handleAddTask = () => {
-    if (newTsk.trim() !== "") {
+    if (newTsk !== "") {
       dispatch(addTask(newTsk.trim()));
       setNewTask("");
     }
@@ -44,6 +44,12 @@ const TodoList = () => {
     setEditedTask("");
   };
 
+  useEffect(() => {
+    tasks.length > 0
+      ? (document.title = `${tasks.length} Task Pending`)
+      : (document.title = "Redux Todo App");
+  });
+
   return (
     <div style={styles.container}>
       <h1>REDUX TODO APP</h1>
@@ -51,12 +57,16 @@ const TodoList = () => {
       <div>
         <input
           type="text"
+          id="taskarea"
           value={newTsk}
           onChange={(e) => setNewTask(e.target.value)}
           style={styles.input}
-          required
         />
-        <button onClick={handleAddTask} style={styles.button}>
+        <button
+          onClick={handleAddTask}
+          style={styles.button}
+          disabled={newTsk === ""}
+        >
           Add Task
         </button>
       </div>
@@ -166,6 +176,7 @@ const styles = {
     backgroundColor: "#fff",
     borderRadius: "4px",
     boxShadow: "0 0 5px rgba(0, 0, 0, 0.1)",
+    overflow: "hidden",
   },
 
   buttonGroup: {
@@ -190,7 +201,6 @@ const styles = {
 
   editButton: {
     padding: "5px",
-    // backgroundColor: "#3a4ecf",
     cursor: "pointer",
     border: "none",
     borderRadius: "4px",
